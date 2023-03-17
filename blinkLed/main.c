@@ -139,11 +139,11 @@ Gpio_example1(void)
         GpioDataRegs.GPBDAT.all    =0x0000000A;
 
 //        delay_loop();
-        DELAY_US(1000000);
+        DELAY_US(50000);
 
         GpioDataRegs.GPADAT.all    =0x55555555;
         GpioDataRegs.GPBDAT.all    =0x00000005;
-        DELAY_US(1000000);
+        DELAY_US(50000);
 //        delay_loop();
     }
 }

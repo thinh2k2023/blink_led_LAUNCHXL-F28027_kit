@@ -40,9 +40,9 @@
 									<listOptionValue builtIn="false" value="${PROJECT_ROOT}"/>
 									<listOptionValue builtIn="false" value="D:\ti\ccs1210\C2000Ware_4_02_00_00\device_support\f2802x"/>
 									<listOptionValue builtIn="false" value="${CG_TOOL_ROOT}/include"/>
-									<listOptionValue builtIn="false" value="D:\ti\ccs1210\C2000Ware_4_02_00_00\device_support\f2802x\common\include"/>
-									<listOptionValue builtIn="false" value="D:\ti\ccs1210\C2000Ware_4_02_00_00\device_support\f2802x\headers\include"/>
-									<listOptionValue builtIn="false" value="D:\ti\ccs1210\C2000Ware_4_02_00_00\libraries\math\IQmath\c28\include"/>
+									<listOptionValue builtIn="false" value="D:\ti\workspace\blinkLed\library\headers\include"/>
+									<listOptionValue builtIn="false" value="D:\ti\workspace\blinkLed\library\common\include"/>
+									<listOptionValue builtIn="false" value="D:\ti\workspace\blinkLed\library\IQmath"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ADVICE__PERFORMANCE.10889566" name="Provide advice on optimization techniques (--advice:performance)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.ADVICE__PERFORMANCE" value="--advice:performance=all" valueType="string"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEBUGGING_MODEL.1763452232" name="Debugging model" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEBUGGING_MODEL" value="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEBUGGING_MODEL.SYMDEBUG__DWARF" valueType="enumerated"/>
@@ -79,7 +79,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="main.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

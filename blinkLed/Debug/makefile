@@ -10,16 +10,16 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./Example_2802xGpioToggle.obj" \
-"./F2802x_GlobalVariableDefs.obj" \
-"./f2802x_codestartbranch.obj" \
-"./f2802x_defaultisr.obj" \
-"./f2802x_piectrl.obj" \
-"./f2802x_pievect.obj" \
-"./f2802x_sysctrl.obj" \
-"./f2802x_usdelay.obj" \
-"D:/ti/ccs1210/C2000Ware_4_02_00_00/device_support/f2802x/headers/cmd/F2802x_Headers_nonBIOS.cmd" \
-"D:/ti/ccs1210/C2000Ware_4_02_00_00/device_support/f2802x/common/cmd/F2802x_generic_ram.cmd" \
+"./main.obj" \
+"./library/SRC/f2802x_codestartbranch.obj" \
+"./library/SRC/f2802x_defaultisr.obj" \
+"./library/SRC/f2802x_piectrl.obj" \
+"./library/SRC/f2802x_pievect.obj" \
+"./library/SRC/f2802x_sysctrl.obj" \
+"./library/SRC/f2802x_usdelay.obj" \
+"./library/headers/include/F2802x_GlobalVariableDefs.obj" \
+"../library/SRC/F2802x_Headers_nonBIOS.cmd" \
+"../library/SRC/F2802x_generic_ram.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 
@@ -31,7 +31,11 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include library/SRC/subdir_vars.mk
+-include library/headers/include/subdir_vars.mk
 -include subdir_rules.mk
+-include library/SRC/subdir_rules.mk
+-include library/headers/include/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -162,9 +166,9 @@ blinkLed.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "Example_2802xGpioToggle.obj" "F2802x_GlobalVariableDefs.obj" "f2802x_codestartbranch.obj" "f2802x_defaultisr.obj" "f2802x_piectrl.obj" "f2802x_pievect.obj" "f2802x_sysctrl.obj" "f2802x_usdelay.obj" 
-	-$(RM) "Example_2802xGpioToggle.d" "F2802x_GlobalVariableDefs.d" "f2802x_defaultisr.d" "f2802x_piectrl.d" "f2802x_pievect.d" "f2802x_sysctrl.d" 
-	-$(RM) "f2802x_codestartbranch.d" "f2802x_usdelay.d" 
+	-$(RM) "main.obj" "library\SRC\f2802x_codestartbranch.obj" "library\SRC\f2802x_defaultisr.obj" "library\SRC\f2802x_piectrl.obj" "library\SRC\f2802x_pievect.obj" "library\SRC\f2802x_sysctrl.obj" "library\SRC\f2802x_usdelay.obj" "library\headers\include\F2802x_GlobalVariableDefs.obj" 
+	-$(RM) "main.d" "library\SRC\f2802x_defaultisr.d" "library\SRC\f2802x_piectrl.d" "library\SRC\f2802x_pievect.d" "library\SRC\f2802x_sysctrl.d" "library\headers\include\F2802x_GlobalVariableDefs.d" 
+	-$(RM) "library\SRC\f2802x_codestartbranch.d" "library\SRC\f2802x_usdelay.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
