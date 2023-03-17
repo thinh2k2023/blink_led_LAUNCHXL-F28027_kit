@@ -1,0 +1,11 @@
+"./main.obj"
+"./library/SRC/f2802x_codestartbranch.obj"
+"./library/SRC/f2802x_defaultisr.obj"
+"./library/SRC/f2802x_piectrl.obj"
+"./library/SRC/f2802x_pievect.obj"
+"./library/SRC/f2802x_sysctrl.obj"
+"./library/SRC/f2802x_usdelay.obj"
+"./library/headers/include/F2802x_GlobalVariableDefs.obj"
+"../library/SRC/F2802x_Headers_nonBIOS.cmd"
+"../library/SRC/F2802x_generic_ram.cmd"
+-llibc.a
