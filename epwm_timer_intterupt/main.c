@@ -126,6 +126,8 @@
 #define PWM2_TIMER_TBPRD   0x1FFF
 #define PWM3_TIMER_TBPRD   0x1FFF
 
+
+
 //
 // Function Prototypes
 //
@@ -141,9 +143,50 @@ uint32_t  EPwm1TimerIntCount;
 uint32_t  EPwm2TimerIntCount;
 uint32_t  EPwm3TimerIntCount;
 
+void gpio_init()
+{
+    EALLOW;
+//    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;
+//    GpioCtrlRegs.GPADIR.bit.GPIO0 = 1;
+    //EPWM1 -> myEPWM1 Pinmux
+    GpioCtrlRegs.GPAMUX1.all = 0;// gpio 15 to gpio 0 a;; general purpouse I/O
+    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;// epwm active
+    EDIS;
+}
+
+void initEPWM1()
+{
+
+        EPwm1Regs.TBPRD = 2000;       // Set timer period 801 TBCLKs
+//        EPwm1Regs.TBPHS.bit.TBPHS = 0x0000;        // Phase is 0
+        EPwm1Regs.TBCTR = 0x0000;
+       // Set Compare values
+        EPwm1Regs.CMPA.half.CMPA = 500;    // Set compare A value
+        EPwm1Regs.CMPB = 1200;    // Set compare A value
+
+
+      // Setup counter mode
+       EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP; // Count up and down
+       EPwm1Regs.TBCTL.bit.PHSEN = TB_DISABLE;        // Disable phase loading
+       EPwm1Regs.TBCTL.bit.HSPCLKDIV = TB_DIV1;       // Clock ratio to SYSCLKOUT
+       EPwm1Regs.TBCTL.bit.CLKDIV = TB_DIV1;          //TB_DIV1 is divide 1
+
+//       EPwm1Regs.AQCTLA.bit.CAU = AQ_SET;            // Set PWM1A on event A, up count
+//       EPwm1Regs.AQCTLA.bit.ZRO = AQ_CLEAR;          // Clear PWM1A on event A, down count
+       EPwm1Regs.AQCTLA.bit.CAU =  AQ_TOGGLE;
+       EPwm1Regs.AQCTLA.bit.CBU =  AQ_TOGGLE;
+
+
+//       EPwm1Regs.AQCTLA.bit.PRD
+}
+
+long cpu_rate = 0;
+
 void main(void)
 {
     int i;
+
+    gpio_init();
 
     //
     // WARNING: Always ensure you call memcpy before running any functions from
@@ -239,6 +282,8 @@ void main(void)
     //
     // Enable global Interrupts and higher priority real-time debug events
     //
+
+    initEPWM1();
     EINT;   // Enable Global interrupt INTM
     ERTM;   // Enable Global realtime interrupt DBGM
 
@@ -247,11 +292,20 @@ void main(void)
     //
     for(;;)
     {
-        __asm("          NOP");
-        for(i=1;i<=10;i++)
-        {
 
-        }
+//        cpu_rate = SYSCLKOUT;
+//        GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
+
+//        if (EPwm1TimerIntCount == 54657)
+//        {
+//            GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
+//        }
+//        __asm("          NOP");
+//        for(i=1;i<=10;i++)
+//        {
+//            GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
+//            DELAY_US(1000000);
+//        }
     }
 }
 
@@ -275,10 +329,11 @@ InitEPwmTimer()
     //
     // Allow each timer to be sync'ed
     //
-    EPwm1Regs.TBCTL.bit.PHSEN = TB_ENABLE;
+    EPwm1Regs.TBCTL.bit.PHSEN = TB_ENABLE; //TB_ENABLE is defined equal 1
     EPwm2Regs.TBCTL.bit.PHSEN = TB_ENABLE;
     EPwm3Regs.TBCTL.bit.PHSEN = TB_ENABLE;
 
+    //TBPHS is timer-base phase register
     EPwm1Regs.TBPHS.half.TBPHS = 100;
     EPwm2Regs.TBPHS.half.TBPHS = 200;
     EPwm3Regs.TBPHS.half.TBPHS = 300;
@@ -293,7 +348,7 @@ InitEPwmTimer()
     EPwm2Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP;     // Count up
     EPwm2Regs.ETSEL.bit.INTSEL = ET_CTR_ZERO;      // Enable INT on Zero event
     EPwm2Regs.ETSEL.bit.INTEN = PWM2_INT_ENABLE;   // Enable INT
-    EPwm2Regs.ETPS.bit.INTPRD = ET_2ND;            // Generate INT on 2nd event
+    EPwm2Regs.ETPS.bit.INTPRD = ET_1ST;            // Generate INT on 2nd event
 
     EPwm3Regs.TBPRD = PWM3_TIMER_TBPRD;
     EPwm3Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP;     // Count up
@@ -313,6 +368,7 @@ __interrupt void
 epwm1_timer_isr(void)
 {
     EPwm1TimerIntCount++;
+
 
     //
     // Clear INT flag for this timer
