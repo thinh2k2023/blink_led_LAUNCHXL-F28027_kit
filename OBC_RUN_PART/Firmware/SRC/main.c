@@ -14,6 +14,7 @@
 
 //normal function
 void gpio_init();
+static void main_loop_1ms(void);
 void InitPie(void);
 void InitIsr(void);
 
@@ -38,6 +39,7 @@ void main(void)
     memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (size_t)&RamfuncsLoadSize);
 #endif
 
+    static uint8_t cnt_200us_mwait = 0;
     //init system control
     InitSysCtrl();
 
@@ -47,23 +49,42 @@ void main(void)
 
     //intit epwm1
     Init_epwm1();    // epwm is used for interrupt timer function
+    Init_epwm2();    //create pwm pulse gpio2
+    Init_epwm3();       //create pwm pulse gpio3
+    Init_epwm4();   //create pwm pulse gpio4
 
     EPwm1TimerIntCount = 0;
 
 
-    for(;;)
+    while( 1U )
     {
+        /* 100us cycle */
+        if (CpuTimer0Regs.TCR.bit.TIF == 1U)
+        {
+            CpuTimer0Regs.TCR.bit.TIF = 1U;
 
-//        cpu_rate = SYSCLKOUT;
-//        GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
+            /* clear timer0 flag            */
 
-//        if (EPwm1TimerIntCount == 54657)
-//        {
-//            GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
-//        }
-//        __asm("          NOP");
-//            GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
-//            DELAY_US(1000000);
+//            Uart_tx_rx();                                       /* UART communication control */
+
+            if(cnt_200us_mwait >= 1)
+            {
+                cnt_200us_mwait = 0;                            /* Clear */
+//                /* 200us cycle */
+//                update_monitor_events_200us();                  /* Fail detection  */
+//                port_input_polling();                           /* Input port polling process */
+//                ServiceDog();                                   /* Reset internal watchdog timer */
+
+//                main_loop_1ms();                                /* 1ms period processing  */
+
+                //test 100us
+                GpioDataRegs.GPATOGGLE.bit.GPIO5 = 1;
+            }
+            else
+            {
+                cnt_200us_mwait ++;
+            }
+        }
     }
 }
 
@@ -71,12 +92,28 @@ void main(void)
 void
 gpio_init()
 {
+
     EALLOW;
+    //gpio
+
+    //gpio 0 - output
     GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 0;
     GpioCtrlRegs.GPADIR.bit.GPIO0 = 1;
-    //EPWM1 -> myEPWM1 Pinmux
-//    GpioCtrlRegs.GPAMUX1.all = 0;// gpio 15 to gpio 0 a;; general purpouse I/O
-//    GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;// epwm active
+
+    //gpio 5 - output
+    GpioCtrlRegs.GPAMUX1.bit.GPIO5 = 0;
+    GpioCtrlRegs.GPADIR.bit.GPIO5 = 1;
+
+    //epwm
+    //EPWM3 -> gpio2
+    GpioCtrlRegs.GPADIR.bit.GPIO2 = 0;  //set direction is output
+    GpioCtrlRegs.GPAMUX1.bit.GPIO2 = 1;// epwm2 active
+    //EPWM3 -> gpio3
+    GpioCtrlRegs.GPADIR.bit.GPIO3 = 0;  //set direction is output
+    GpioCtrlRegs.GPAMUX1.bit.GPIO3 = 1;// epwm3 active
+    //EPWM3 -> gpio4
+    GpioCtrlRegs.GPADIR.bit.GPIO4 = 0;  //set direction is output
+    GpioCtrlRegs.GPAMUX1.bit.GPIO4 = 1;// epwm3 active
     EDIS;
 }
 
@@ -127,6 +164,81 @@ InitIsr(void)
     EINT; /* Enable Global interrupt INTM */
     ERTM; /* Enable Global realtime interrupt DBGM */
 }
+
+static void main_loop_1ms(void)
+{
+    /*
+    * AUTHER:
+    * UNIT-ID: 0004
+    * DESCRIPTION: This function is 1ms period processing.
+    * ARGUMENT: nothing
+    * RETURN: nothing
+    * NOTE:
+    */
+
+    static uint8_t cnt_200us_main = 0;
+    static uint8_t cnt_1ms_main = 0;
+    /* 1ms period processing  */
+    switch(cnt_200us_main)
+    {
+        case 0u:
+//            receivedata_ecan();                             /* CAN receive process */
+//            port_in();                                          /* Input port processing  */
+//            update_adc_average_value_1ms();                 /* set current AD value for average process */
+
+            break;
+
+        case 1u:
+            if(cnt_1ms_main == 8)
+            {
+//                adc_average_process_10ms();                 /* AD average process 10ms */
+            }
+            else if(cnt_1ms_main >= 9)
+            {
+//                phy_value_convert_ctrl_10ms();              /* AD conversion process 10ms */
+            }
+            else{}
+
+            break;
+
+        case 2u:
+//            update_monitor_events_1ms_1();                      /* Fail 1 detection  */
+
+            break;
+
+        case 3u:
+//            update_monitor_events_1ms_2();                      /* Fail 2 detection  */
+//            update_monitor_events_1ms_3();                      /* Fail 3 detection  */
+
+            break;
+
+        case 4u:
+//            state_machine();                                    /* State transition  */
+//            port_out();                                         /* Port output processing  */
+//            tx_can_send();                                      /* CAN transmit process  */
+////            InitGpioDir();                                     /* Port resetting  *//* bug function!!!  */
+
+            break;
+
+        default:
+            cnt_200us_main = 0u;
+            break;
+    }
+
+    ++cnt_200us_main;
+    if(cnt_200us_main >= 5u)
+    {
+        cnt_200us_main = 0u;
+
+        /* 10ms cycle counter */
+        ++cnt_1ms_main;
+        if(cnt_1ms_main >= 10u)
+        {
+            cnt_1ms_main = 0u;
+        }
+    }
+}
+
 //
 // End of File
 //

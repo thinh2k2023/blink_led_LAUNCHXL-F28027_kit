@@ -18,7 +18,7 @@ __interrupt void
 adcbint1_isr(void)
 {
     EPwm1TimerIntCount++;
-    GpioDataRegs.GPASET.bit.GPIO0 = 1;
+    GpioDataRegs.GPATOGGLE.bit.GPIO0 = 1;
 
     //
     // Clear INT flag for this timer
@@ -29,7 +29,7 @@ adcbint1_isr(void)
     // Acknowledge this interrupt to receive more interrupts from group 3
     //
     PieCtrlRegs.PIEACK.bit.ACK3 = 1; /*system clear flag group 3 interrupt */
-    GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;
+//    GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;
 }
 
 /***********************************************************************************************************************
