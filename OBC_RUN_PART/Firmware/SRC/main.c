@@ -8,6 +8,8 @@
 
 #include "adcint1_isr.h"
 
+#include "cpu_timer_driver.h"
+
 //
 // Function Prototypes
 //
@@ -53,6 +55,9 @@ void main(void)
     Init_epwm3();       //create pwm pulse gpio3
     Init_epwm4();   //create pwm pulse gpio4
 
+    //init timer
+    InitTimer();
+
     EPwm1TimerIntCount = 0;
 
 
@@ -67,7 +72,8 @@ void main(void)
 
 //            Uart_tx_rx();                                       /* UART communication control */
 
-            if(cnt_200us_mwait >= 1)
+
+            if(cnt_200us_mwait >= 1)  //x2
             {
                 cnt_200us_mwait = 0;                            /* Clear */
 //                /* 200us cycle */
@@ -75,10 +81,10 @@ void main(void)
 //                port_input_polling();                           /* Input port polling process */
 //                ServiceDog();                                   /* Reset internal watchdog timer */
 
-//                main_loop_1ms();                                /* 1ms period processing  */
+                main_loop_1ms();                                /* 1ms period processing  */
 
                 //test 100us
-                GpioDataRegs.GPATOGGLE.bit.GPIO5 = 1;
+
             }
             else
             {
@@ -182,6 +188,7 @@ static void main_loop_1ms(void)
     switch(cnt_200us_main)
     {
         case 0u:
+            GpioDataRegs.GPATOGGLE.bit.GPIO5 = 1;
 //            receivedata_ecan();                             /* CAN receive process */
 //            port_in();                                          /* Input port processing  */
 //            update_adc_average_value_1ms();                 /* set current AD value for average process */
